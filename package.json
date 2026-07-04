@@ -1,0 +1,25 @@
+{
+  "name": "team-forge",
+  "version": "0.1.0",
+  "private": true,
+  "description": "AI-native collaborative R&D workspace with code graph context, action gates, and evidence loops.",
+  "type": "module",
+  "scripts": {
+    "dev": "pnpm --filter @team-forge/web dev",
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "typecheck": "pnpm -r typecheck"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@types/node": "^24.10.1",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.2",
+    "jsdom": "^28.0.0",
+    "typescript": "^5.9.3",
+    "vite": "^7.2.7",
+    "vitest": "^4.0.15"
+  }
+}
