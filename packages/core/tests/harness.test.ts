@@ -4,7 +4,8 @@ import {
   createEventLedger,
   createSeedWorkspace,
   evaluateActionAdmission,
-  projectWorkspace
+  projectWorkspace,
+  validateWorkItemReference
 } from "../src/index";
 
 describe("team forge core harness", () => {
@@ -53,6 +54,7 @@ describe("team forge core harness", () => {
       taskId: "task-ai-workspace-mvp",
       capabilityContractId: "capability-context-gate",
       intent: "Disable audit logs to simplify implementation",
+      stage: "implement",
       touchedPaths: ["packages/core/src/admission.ts", "packages/core/src/audit.ts"],
       declaredTests: ["packages/core/tests/harness.test.ts"],
       riskSignals: ["audit-bypass"]
@@ -73,6 +75,7 @@ describe("team forge core harness", () => {
       taskId: "task-ai-workspace-mvp",
       capabilityContractId: "capability-context-gate",
       intent: "Reuse billing settings as a quick persistence layer",
+      stage: "implement",
       touchedPaths: ["apps/web/src/App.tsx", "packages/billing/src/store.ts"],
       declaredTests: ["apps/web/src/App.test.tsx"],
       riskSignals: []
@@ -102,6 +105,126 @@ describe("team forge core harness", () => {
     expect(contextPackage.requiredSkills).toContain("reuse-first-plan");
     expect(contextPackage.requiredEvidence).toContain("contract-tests");
     expect(contextPackage.forbiddenChanges).toContain("Bypass audit or evidence recording");
+    expect(contextPackage.sourceSnapshot).toBe("418306e9e142ca51c9f93246ef8187226e690065");
+    expect(contextPackage.codeGraphVersion).toBe("seed-v1");
+    expect(contextPackage.nextRequiredGate).toBeUndefined();
+  });
+
+  test("blocks an action when its task contract is unknown", () => {
+    const decision = evaluateActionAdmission(createSeedWorkspace(), {
+      id: "action-orphan",
+      actor: "coding-agent",
+      taskId: "missing-task",
+      capabilityContractId: "capability-context-gate",
+      intent: "Start coding without task context",
+      stage: "implement",
+      touchedPaths: ["packages/core/src/context.ts"],
+      declaredTests: ["packages/core/tests/harness.test.ts"],
+      riskSignals: []
+    });
+
+    expect(decision.status).toBe("blocked");
+    expect(decision.reasons).toContain("Unknown task contract: missing-task");
+  });
+
+  test("requires a coding issue for bugs and accepts same-root-cause issue links", () => {
+    expect(validateWorkItemReference({
+      workId: "bug-team-forge-12",
+      workType: "bug",
+      alsoResolvesIssueUrls: []
+    })).toContain("Bug work must link a coding repository issue.");
+
+    expect(validateWorkItemReference({
+      workId: "bug-team-forge-12",
+      workType: "bug",
+      codingIssueUrl: "https://github.com/example/team-forge/issues/12",
+      alsoResolvesIssueUrls: ["https://github.com/example/team-forge/issues/18"]
+    })).toEqual([]);
+  });
+
+  test("blocks feature implementation until standard human gates are approved", () => {
+    const workspace = createSeedWorkspace();
+    workspace.taskContracts[0].gateRecords = [];
+
+    const decision = evaluateActionAdmission(workspace, {
+      id: "action-before-gates",
+      actor: "coding-agent",
+      taskId: "task-ai-workspace-mvp",
+      capabilityContractId: "capability-context-gate",
+      intent: "Implement before plan review",
+      stage: "implement",
+      touchedPaths: ["packages/core/src/context.ts"],
+      declaredTests: ["packages/core/tests/harness.test.ts"],
+      riskSignals: []
+    });
+
+    expect(decision.status).toBe("blocked");
+    expect(decision.reasons).toContain("Human gate approval is missing: plan-review");
+    expect(decision.reasons).toContain("Human gate approval is missing: tasks-review");
+  });
+
+  test("requires explicit compact eligibility and combined review before implementation", () => {
+    const workspace = createSeedWorkspace();
+    workspace.taskContracts[0].planningMode = "compact";
+    workspace.taskContracts[0].gateRecords = workspace.taskContracts[0].gateRecords.filter(
+      (record) => record.gate === "spec-review"
+    );
+
+    const decision = evaluateActionAdmission(workspace, {
+      id: "action-compact-unapproved",
+      actor: "coding-agent",
+      taskId: "task-ai-workspace-mvp",
+      capabilityContractId: "capability-context-gate",
+      intent: "Use compact planning",
+      stage: "implement",
+      touchedPaths: ["packages/core/src/context.ts"],
+      declaredTests: ["packages/core/tests/harness.test.ts"],
+      riskSignals: []
+    });
+
+    expect(decision.status).toBe("blocked");
+    expect(decision.reasons).toContain("Human gate approval is missing: compact-eligibility");
+    expect(decision.reasons).toContain("Human gate approval is missing: compact-plan-tasks-review");
+  });
+
+  test("blocks PR admission without an Evidence Board and fresh self-test results", () => {
+    const decision = evaluateActionAdmission(createSeedWorkspace(), {
+      id: "action-pr-without-evidence",
+      actor: "coding-agent",
+      taskId: "task-ai-workspace-mvp",
+      capabilityContractId: "capability-context-gate",
+      intent: "Open a PR",
+      stage: "pr",
+      touchedPaths: ["packages/core/src/context.ts"],
+      declaredTests: ["packages/core/tests/harness.test.ts"],
+      riskSignals: []
+    });
+
+    expect(decision.status).toBe("blocked");
+    expect(decision.reasons).toContain("An Evidence Board is required before PR submission.");
+    expect(decision.reasons).toContain("Fresh self-test results are required before PR submission.");
+  });
+
+  test("blocks architecture-sensitive changes without impact evidence and approval", () => {
+    const workspace = createSeedWorkspace();
+    delete workspace.taskContracts[0].artifacts.impactAnalysis;
+
+    const decision = evaluateActionAdmission(workspace, {
+      id: "action-public-contract",
+      actor: "coding-agent",
+      taskId: "task-ai-workspace-mvp",
+      capabilityContractId: "capability-context-gate",
+      intent: "Change a public contract",
+      stage: "implement",
+      touchedPaths: ["packages/core/src/types.ts"],
+      declaredTests: ["packages/core/tests/harness.test.ts"],
+      riskSignals: [],
+      changeSignals: ["public-contract"]
+    });
+
+    expect(decision.status).toBe("blocked");
+    expect(decision.reasons).toContain("Architecture-sensitive changes require recorded impact analysis.");
+    expect(decision.reasons).toContain("Architecture-sensitive changes require human impact approval.");
+    expect(decision.requiredEvidence).toContain("code-graph-impact");
   });
 });
-

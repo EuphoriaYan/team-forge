@@ -13,12 +13,15 @@
 ## Required Working Flow
 
 1. Identify the problem card, capability contract, and task contract.
-2. Locate the relevant code graph slice.
-3. Survey existing capability and reuse candidates.
-4. Propose the smallest change radius.
-5. Write or update tests before implementation.
-6. Implement inside the authorized path radius.
-7. Produce an evidence package with tests, risks, and review points.
+2. Confirm the work type and source: a coding issue for bugs, or a coding issue
+   or approved handoff URL for features and new projects.
+3. Locate the relevant code graph slice.
+4. Survey existing capability and reuse candidates.
+5. Propose the smallest change radius and declare architecture-sensitive changes.
+6. Write or update tests before implementation.
+7. Obtain the required human gate records; Compact mode is never inferred.
+8. Implement inside the authorized path radius.
+9. Produce an Evidence Board with fresh self-test results, risks, and review points.
 
 ## Forbidden Behaviors
 
@@ -40,4 +43,3 @@ Every PR must explain:
 - tests and evidence
 - residual risks
 - human review points
-

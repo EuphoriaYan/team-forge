@@ -98,9 +98,45 @@ export function createSeedWorkspace(): ForgeWorkspace {
         capabilityContractId: "capability-context-gate",
         allowedPathPrefixes: ["packages/core/", "apps/web/", "docs/", ".github/"],
         reuseCandidates: ["EventLedger", "WorkspaceProjector", "EvidenceBoard"],
-        requiredEvidence: ["contract-tests", "ui-smoke-test", "human-architecture-review"]
+        requiredEvidence: ["contract-tests", "ui-smoke-test", "human-architecture-review"],
+        workItem: {
+          workId: "feature-team-forge-mvp",
+          workType: "feature",
+          codingIssueUrl: "https://github.com/chaosxingxc-orion/team-forge/issues/1",
+          alsoResolvesIssueUrls: []
+        },
+        planningMode: "standard",
+        phase: "implementing",
+        artifacts: {
+          spec: "docs/superpowers/specs/2026-07-04-team-forge-design.md",
+          plan: "docs/superpowers/plans/2026-07-04-team-forge-initialization.md",
+          tasks: "docs/superpowers/plans/2026-07-04-team-forge-initialization.md",
+          impactAnalysis: "docs/ARCHITECTURE.md"
+        },
+        gateRecords: [
+          {
+            gate: "spec-review",
+            decision: "approved",
+            decidedBy: "project-lead",
+            decidedAt: "2026-07-04T08:11:00.000Z"
+          },
+          {
+            gate: "plan-review",
+            decision: "approved",
+            decidedBy: "project-lead",
+            decidedAt: "2026-07-04T08:12:00.000Z"
+          },
+          {
+            gate: "tasks-review",
+            decision: "approved",
+            decidedBy: "project-lead",
+            decidedAt: "2026-07-04T08:13:00.000Z"
+          }
+        ]
       }
     ],
+    sourceSnapshot: "418306e9e142ca51c9f93246ef8187226e690065",
+    codeGraphVersion: "seed-v1",
     codeGraph: [
       {
         id: "node-event-ledger",
@@ -133,4 +169,3 @@ export function createSeedWorkspace(): ForgeWorkspace {
     ]
   };
 }
-

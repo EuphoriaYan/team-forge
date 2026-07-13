@@ -28,6 +28,7 @@ const admissionDecision = evaluateActionAdmission(workspace, {
   taskId: "task-ai-workspace-mvp",
   capabilityContractId: "capability-context-gate",
   intent: "Render workspace dashboard and reuse core projection model",
+  stage: "implement",
   touchedPaths: ["apps/web/src/App.tsx", "packages/billing/src/store.ts"],
   declaredTests: ["apps/web/src/App.test.tsx"],
   riskSignals: []
@@ -152,4 +153,3 @@ export function App() {
     </main>
   );
 }
-

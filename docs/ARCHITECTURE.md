@@ -23,6 +23,7 @@ flowchart LR
 - `projector.ts`: converts events into typed workspace subspaces
 - `admission.ts`: evaluates agent action risk and review requirements
 - `context.ts`: builds a task context package from task contracts and code graph slices
+- `work-item.ts`: validates stable bug, feature, and new-project source references
 - `seed.ts`: stable seed workspace for MVP and UI development
 
 `apps/web` owns the first workspace surface:
@@ -39,6 +40,21 @@ flowchart LR
 - Contract-first: AI actions are checked against explicit task and capability contracts.
 - Reuse-first: task context includes reuse candidates before implementation starts.
 - Evidence-first: completion is measured by evidence packages, not code changes alone.
+- Resumable: work identity, phase, artifacts, graph version, and human gates are
+  explicit context rather than hidden chat state.
+
+## SDD Compatibility Direction
+
+Team Forge hosts Spec-driven workflows as projections over its core contracts:
+
+```text
+Intake -> Spec -> Plan -> Tasks -> Implement -> Evidence -> PR -> Review
+```
+
+Standard mode reviews Plan and Tasks separately. Compact mode still produces
+both artifacts but combines their human review for eligible low-risk work. Bug
+fixes and features use different work-item rules, while new-project work always
+uses Standard mode. See [AI-TEAM-MIGRATION.md](AI-TEAM-MIGRATION.md).
 
 ## Later Architecture
 
@@ -52,4 +68,3 @@ The current in-memory seed model should evolve into:
 - Skill Registry
 - Hook Runtime
 - Agent Eval & Evolution Service
-
