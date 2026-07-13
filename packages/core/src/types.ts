@@ -8,12 +8,36 @@ export type SubspaceKey =
 
 export type RiskLevel = "low" | "medium" | "high" | "forbidden";
 export type AdmissionStatus = "allowed" | "needs-review" | "blocked";
+export type WorkType = "bug" | "feature" | "new-project";
+export type PlanningMode = "standard" | "compact";
+export type WorkPhase =
+  | "intake"
+  | "specified"
+  | "planned"
+  | "tasks-ready"
+  | "implementing"
+  | "evidence"
+  | "pr"
+  | "review"
+  | "done"
+  | "blocked";
+export type ActionStage = "analysis" | "plan" | "tasks" | "implement" | "pr";
+export type GateDecision = "approved" | "revised" | "rejected";
+export type ChangeSignal =
+  | "cross-module"
+  | "public-contract"
+  | "class-shape"
+  | "dependency"
+  | "database-ownership";
 
 export type EventType =
   | "problem.defined"
   | "capability.contracted"
   | "adr.recorded"
   | "task.created"
+  | "work.classified"
+  | "gate.decided"
+  | "context.updated"
   | "change.proposed"
   | "verification.contracted"
   | "evidence.recorded"
@@ -59,6 +83,34 @@ export interface CapabilityContract {
   allowedPathPrefixes: string[];
 }
 
+export interface WorkItemReference {
+  workId: string;
+  workType: WorkType;
+  codingIssueUrl?: string;
+  alsoResolvesIssueUrls: string[];
+  handoffRequirementUrl?: string;
+}
+
+export interface HumanGateRecord {
+  gate: string;
+  decision: GateDecision;
+  decidedBy: string;
+  decidedAt: string;
+  rationale?: string;
+}
+
+export interface WorkArtifacts {
+  spec?: string;
+  plan?: string;
+  tasks?: string;
+  bugAssessment?: string;
+  impactAnalysis?: string;
+  permissionRecord?: string;
+  changeSet?: string;
+  evidenceBoard?: string;
+  selfTestResults?: string;
+}
+
 export interface TaskContract {
   id: string;
   title: string;
@@ -66,6 +118,11 @@ export interface TaskContract {
   allowedPathPrefixes: string[];
   reuseCandidates: string[];
   requiredEvidence: string[];
+  workItem: WorkItemReference;
+  planningMode: PlanningMode;
+  phase: WorkPhase;
+  artifacts: WorkArtifacts;
+  gateRecords: HumanGateRecord[];
 }
 
 export interface CodeGraphNode {
@@ -81,6 +138,8 @@ export interface ForgeWorkspace {
   capabilityContracts: CapabilityContract[];
   taskContracts: TaskContract[];
   codeGraph: CodeGraphNode[];
+  sourceSnapshot?: string;
+  codeGraphVersion?: string;
 }
 
 export interface ActionRequest {
@@ -89,9 +148,11 @@ export interface ActionRequest {
   taskId: string;
   capabilityContractId: string;
   intent: string;
+  stage: ActionStage;
   touchedPaths: string[];
   declaredTests: string[];
   riskSignals: string[];
+  changeSignals?: ChangeSignal[];
 }
 
 export interface AdmissionDecision {
@@ -103,6 +164,9 @@ export interface AdmissionDecision {
 }
 
 export interface TaskContextPackage {
+  contextVersion: string;
+  sourceSnapshot: string;
+  codeGraphVersion: string;
   task: TaskContract;
   capability: CapabilityContract;
   codeGraphSlice: {
@@ -112,5 +176,6 @@ export interface TaskContextPackage {
   requiredSkills: string[];
   requiredEvidence: string[];
   forbiddenChanges: string[];
+  nextRequiredGate?: string;
+  stopConditions: string[];
 }
-

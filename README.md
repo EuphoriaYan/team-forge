@@ -9,6 +9,8 @@ Team Forge is an AI-native collaborative R&D workspace. It turns fast AI coding 
 - A visible MVP dashboard for six subspaces: problem definition, architecture contract, task execution, verification evidence, release operations, and agent evolution.
 - GitHub-ready collaboration assets: CI, PR evidence template, CODEOWNERS, Copilot instructions, and agent guidance.
 - Contract templates for capability contracts, verification contracts, and action admission reviews.
+- First-wave enterprise SDD contracts for work identity, resumable context,
+  Standard/Compact planning, human gates, and PR evidence admission.
 
 ## Repository Layout
 
@@ -34,7 +36,13 @@ pnpm dev
 
 The app runs through Vite at `http://localhost:5173` by default.
 
+## AI Team Migration
+
+The staged compatibility plan is documented in
+[docs/AI-TEAM-MIGRATION.md](docs/AI-TEAM-MIGRATION.md). Team Forge adopts the
+behavioral contracts behind the AI Team Spec Kit extension while keeping its
+own event, projection, admission, and UI architecture.
+
 ## First Product Principle
 
 Do not make humans chase every AI-generated line. Make AI work reviewable through intent, contracts, code graph slices, change radius, tests, and evidence packages.
-
