@@ -1,9 +1,11 @@
 import { describe, expect, test } from "vitest";
 import {
   buildTaskContextPackage,
+  createWorkContextRecord,
   createEventLedger,
   createSeedWorkspace,
   evaluateActionAdmission,
+  evaluateContextResume,
   projectWorkspace,
   validateWorkItemReference
 } from "../src/index";
@@ -172,6 +174,46 @@ describe("team forge core harness", () => {
 
     expect(decision.status).toBe("allowed");
     expect(decision.reasons).toEqual([]);
+  });
+
+  test("resumes a current Work Context and blocks stale source or graph state", () => {
+    const context = buildTaskContextPackage(createSeedWorkspace(), "task-ai-workspace-mvp");
+    const record = createWorkContextRecord(context, {
+      updatedAt: "2026-07-13T07:00:00.000Z",
+      nextAction: "implement"
+    });
+
+    expect(evaluateContextResume(record, context.sourceSnapshot, context.codeGraphVersion)).toMatchObject({
+      status: "ready",
+      nextAction: "implement"
+    });
+    expect(evaluateContextResume(record, "new-source", "new-graph")).toMatchObject({
+      status: "blocked",
+      nextAction: "refresh-context-impact",
+      reasons: [
+        "Source snapshot changed; refresh impact analysis before resuming.",
+        "Code Graph version changed; rebuild the task slice before resuming."
+      ]
+    });
+  });
+
+  test("blocks resume when source or Code Graph identity is unknown", () => {
+    const workspace = createSeedWorkspace();
+    delete workspace.sourceSnapshot;
+    delete workspace.codeGraphVersion;
+    const context = buildTaskContextPackage(workspace, "task-ai-workspace-mvp");
+    const record = createWorkContextRecord(context, {
+      updatedAt: "2026-07-13T07:00:00.000Z"
+    });
+
+    expect(evaluateContextResume(record, "unknown", "unknown")).toMatchObject({
+      status: "blocked",
+      nextAction: "refresh-context-impact",
+      reasons: [
+        "Source snapshot is unknown; capture a concrete source revision before resuming.",
+        "Code Graph version is unknown; build a concrete graph slice before resuming."
+      ]
+    });
   });
 
   test("blocks feature implementation until standard human gates are approved", () => {

@@ -1,18 +1,14 @@
 {
-  "name": "@team-forge/core",
+  "name": "@team-forge/file-store",
   "version": "0.1.0",
   "private": true,
   "type": "module",
   "main": "./dist/index.js",
-  "types": "./src/index.ts",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./src/index.ts",
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
-    },
-    "./work-item": {
-      "types": "./src/work-item.ts",
-      "import": "./dist/work-item.js"
     }
   },
   "scripts": {
@@ -20,7 +16,11 @@
     "test": "vitest run --config vitest.config.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
+  "dependencies": {
+    "@team-forge/core": "workspace:*"
+  },
   "devDependencies": {
+    "@types/node": "^24.10.1",
     "typescript": "^5.9.3",
     "vitest": "^4.0.15"
   }

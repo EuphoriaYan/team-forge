@@ -17,6 +17,7 @@ Team Forge is an AI-native collaborative R&D workspace. It turns fast AI coding 
 ```text
 apps/web/              React workspace dashboard
 packages/core/         Domain model, event ledger, projector, gate, context package
+packages/file-store/   Default local Work Context persistence adapter
 docs/                  Product brief, architecture, roadmap, implementation notes
 .ai/contracts/         Capability, verification, and admission contract templates
 .github/               CI, PR template, CODEOWNERS, Copilot instructions
