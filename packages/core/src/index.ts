@@ -1,4 +1,8 @@
-export { buildTaskContextPackage } from "./context";
+export {
+  buildTaskContextPackage,
+  createWorkContextRecord,
+  evaluateContextResume
+} from "./context";
 export { evaluateActionAdmission } from "./admission";
 export { createEventLedger } from "./ledger";
 export { projectWorkspace } from "./projector";
@@ -14,6 +18,7 @@ export type {
   EngineeringEvent,
   ForgeWorkspace,
   RiskLevel,
+  ResumeDecision,
   ChangeSignal,
   GateDecision,
   HumanGateRecord,
@@ -23,6 +28,8 @@ export type {
   TaskContract,
   WorkArtifacts,
   WorkItemReference,
+  WorkContextRecord,
+  WorkContextStore,
   WorkPhase,
   WorkType,
   WorkspaceItem,

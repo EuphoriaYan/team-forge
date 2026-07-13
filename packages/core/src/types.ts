@@ -176,3 +176,26 @@ export interface TaskContextPackage {
   nextRequiredGate?: string;
   stopConditions: string[];
 }
+
+export interface WorkContextRecord {
+  schemaVersion: "1.0";
+  workId: string;
+  workflowRunId?: string;
+  lastCompletedAction?: string;
+  nextAction?: string;
+  updatedAt: string;
+  context: TaskContextPackage;
+}
+
+export interface WorkContextStore {
+  save(record: WorkContextRecord): Promise<void>;
+  load(workId: string): Promise<WorkContextRecord | undefined>;
+}
+
+export interface ResumeDecision {
+  status: "ready" | "blocked";
+  workId: string;
+  phase: WorkPhase;
+  nextAction?: string;
+  reasons: string[];
+}

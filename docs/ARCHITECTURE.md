@@ -26,6 +26,13 @@ flowchart LR
 - `work-item.ts`: validates stable bug, feature, and new-project source references
 - `seed.ts`: stable seed workspace for MVP and UI development
 
+`packages/file-store` is the default local persistence adapter:
+
+- atomically writes versioned Work Context records as JSON;
+- rejects unsafe work IDs before resolving filesystem paths;
+- implements the core `WorkContextStore` port without adding Node dependencies
+  to the browser-facing core package.
+
 `apps/web` owns the first workspace surface:
 
 - six typed subspaces

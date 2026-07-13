@@ -42,8 +42,8 @@ implementation of engineering concepts and contracts.
 | Bug, feature, new-project identity | `WorkItemReference` | direct | implemented |
 | Primary and same-root-cause issue links | work-item validator | direct | implemented |
 | Public issue or confidential handoff URL | `WorkItemReference` | direct | implemented |
-| Durable Work Context Package | typed task context plus persistence adapter | adapt | core contract implemented |
-| Cross-session resume | persisted context plus ledger replay | adapt | planned |
+| Durable Work Context Package | typed task context plus persistence adapter | adapt | file default implemented |
+| Cross-session resume | persisted context plus freshness decision | adapt | first implementation |
 | Source snapshot and Code Graph version | `TaskContextPackage` | direct | implemented |
 | Task-specific Code Graph slice | path-radius graph projection | adapt | first slice implemented |
 | Code Graph generator/adapters | Code Graph service port | adapt | planned |
@@ -80,10 +80,10 @@ implementation must preserve the same inputs and decisions.
 
 ### Wave 2: Persistent Work Context And Resume
 
-- define context and ledger storage ports;
-- ship a local file adapter as the default;
-- reconstruct the next action from persisted state;
-- reject stale source or graph snapshots until impact is refreshed;
+- define context and storage ports (implemented);
+- ship a local file adapter as the default (implemented);
+- reconstruct the next action from persisted state (implemented for gate/action);
+- reject stale source or graph snapshots until impact is refreshed (implemented);
 - expose resume by work ID, issue URL, or workflow run ID.
 
 ### Wave 3: Workflow Runtime
