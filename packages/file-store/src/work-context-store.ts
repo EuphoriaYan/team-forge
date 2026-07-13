@@ -50,6 +50,20 @@ function parseRecord(content: string, expectedWorkId: string): WorkContextRecord
   if (!isRecord(workItem) || workItem.workId !== expectedWorkId) {
     throw new Error(`Work Context task identity conflicts with stored work ID: ${expectedWorkId}`);
   }
+  if (value.workflowState !== undefined) {
+    if (!isRecord(value.workflowState)) {
+      throw new Error(`Work Context has an invalid workflow state: ${expectedWorkId}`);
+    }
+    if (value.workflowState.workId !== expectedWorkId) {
+      throw new Error(`Workflow state conflicts with stored work ID: ${expectedWorkId}`);
+    }
+    if (
+      typeof value.workflowRunId !== "string" ||
+      value.workflowState.runId !== value.workflowRunId
+    ) {
+      throw new Error(`Workflow state conflicts with stored run ID: ${expectedWorkId}`);
+    }
+  }
   return value as unknown as WorkContextRecord;
 }
 

@@ -9,6 +9,7 @@ The adapter:
 - validates work IDs before building a path;
 - writes through a unique temporary file and atomically replaces the record;
 - rejects records whose stored ID conflicts with the nested task identity;
+- rejects workflow checkpoints whose work or run identity conflicts with the record;
 - leaves source and Code Graph freshness decisions to the core resume policy.
 
 The host repository decides whether sanitized context records are tracked in

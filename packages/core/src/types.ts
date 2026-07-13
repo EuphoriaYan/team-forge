@@ -38,6 +38,7 @@ export type EventType =
   | "work.classified"
   | "gate.decided"
   | "context.updated"
+  | "workflow.checkpointed"
   | "change.proposed"
   | "verification.contracted"
   | "evidence.recorded"
@@ -97,6 +98,13 @@ export interface HumanGateRecord {
   decidedBy: string;
   decidedAt: string;
   rationale?: string;
+}
+
+export interface WorkflowGateRecord extends HumanGateRecord {
+  workflowId: string;
+  runId: string;
+  workId: string;
+  authority: string;
 }
 
 export interface WorkArtifacts {
@@ -187,6 +195,7 @@ export interface WorkContextRecord {
   lastCompletedAction?: string;
   nextAction?: string;
   updatedAt: string;
+  workflowState?: WorkflowRunState;
   context: TaskContextPackage;
 }
 
@@ -201,4 +210,43 @@ export interface ResumeDecision {
   phase: WorkPhase;
   nextAction?: string;
   reasons: string[];
+}
+
+export type WorkflowRole = "product" | "architect" | "developer" | "reviewer" | "system";
+
+export interface WorkflowStepDefinition {
+  id: string;
+  phase: WorkPhase;
+  role: WorkflowRole;
+  reads: string[];
+  writes: string[];
+  gate?: {
+    authority: string;
+    reviseTo?: string;
+  };
+}
+
+export interface WorkflowDefinition {
+  id: string;
+  workType: WorkType;
+  planningMode: PlanningMode;
+  steps: WorkflowStepDefinition[];
+}
+
+export interface WorkflowRunState {
+  workflowId: string;
+  runId: string;
+  workId: string;
+  currentStepId?: string;
+  status: "running" | "completed" | "rejected";
+  completedStepIds: string[];
+  revisionCounts: Record<string, number>;
+  gateRecords: WorkflowGateRecord[];
+}
+
+export interface WorkflowCheckpointPayload {
+  workflowId: string;
+  runId: string;
+  workId: string;
+  state: WorkflowRunState;
 }

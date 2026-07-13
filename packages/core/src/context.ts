@@ -2,7 +2,8 @@ import type {
   ForgeWorkspace,
   ResumeDecision,
   TaskContextPackage,
-  WorkContextRecord
+  WorkContextRecord,
+  WorkflowRunState
 } from "./types";
 
 export function buildTaskContextPackage(workspace: ForgeWorkspace, taskId: string): TaskContextPackage {
@@ -52,17 +53,29 @@ export function createWorkContextRecord(
   options: {
     updatedAt: string;
     workflowRunId?: string;
+    workflowState?: WorkflowRunState;
     lastCompletedAction?: string;
     nextAction?: string;
   }
 ): WorkContextRecord {
+  if (options.workflowState && options.workflowState.workId !== context.task.workItem.workId) {
+    throw new Error("Workflow state and Task Context reference different work IDs.");
+  }
+  if (
+    options.workflowState &&
+    options.workflowRunId &&
+    options.workflowState.runId !== options.workflowRunId
+  ) {
+    throw new Error("Workflow state and record reference different run IDs.");
+  }
   return {
     schemaVersion: "1.0",
     workId: context.task.workItem.workId,
-    workflowRunId: options.workflowRunId,
+    workflowRunId: options.workflowState?.runId ?? options.workflowRunId,
     lastCompletedAction: options.lastCompletedAction,
     nextAction: options.nextAction,
     updatedAt: options.updatedAt,
+    workflowState: options.workflowState,
     context
   };
 }
@@ -76,6 +89,16 @@ export function evaluateContextResume(
 
   if (record.workId !== record.context.task.workItem.workId) {
     reasons.push("Stored work ID conflicts with the context task.");
+  }
+  if (record.workflowState?.workId !== undefined && record.workflowState.workId !== record.workId) {
+    reasons.push("Stored workflow state conflicts with the Work Context identity.");
+  }
+  if (
+    record.workflowState &&
+    record.workflowRunId &&
+    record.workflowState.runId !== record.workflowRunId
+  ) {
+    reasons.push("Stored workflow state conflicts with the workflow run identity.");
   }
   if (record.context.sourceSnapshot === "unknown" || currentSourceSnapshot === "unknown") {
     reasons.push("Source snapshot is unknown; capture a concrete source revision before resuming.");
@@ -94,7 +117,7 @@ export function evaluateContextResume(
     phase: record.context.task.phase,
     nextAction: reasons.length > 0
       ? "refresh-context-impact"
-      : record.context.nextRequiredGate ?? record.nextAction,
+      : record.workflowState?.currentStepId ?? record.context.nextRequiredGate ?? record.nextAction,
     reasons
   };
 }

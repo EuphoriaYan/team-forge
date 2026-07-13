@@ -48,9 +48,9 @@ implementation of engineering concepts and contracts.
 | Task-specific Code Graph slice | path-radius graph projection | adapt | first slice implemented |
 | Code Graph generator/adapters | Code Graph service port | adapt | planned |
 | Impact analysis and architecture review | admission signals and human gate records | direct | implemented |
-| Standard SDD | workflow definition and role handoffs | adapt | planned |
-| Compact Plan/Tasks | workflow branch with explicit human gates | adapt | admission implemented |
-| Role-isolated contexts | phase handoff documents and scoped context projections | adapt | planned |
+| Standard SDD | workflow definition and role handoffs | adapt | core workflow implemented |
+| Compact Plan/Tasks | workflow branch with explicit human gates | adapt | core workflow implemented |
+| Role-isolated contexts | phase handoff artifacts and scoped reads | adapt | core contract implemented |
 | Permission Envelope | policy/adaptor contract around admitted actions | adapt | planned |
 | Self-test and Evidence Board | verification and evidence services | direct | PR gate implemented |
 | Portable checks | check runner adapter that writes evidence | adapt | planned |
@@ -89,10 +89,11 @@ implementation must preserve the same inputs and decisions.
 ### Wave 3: Workflow Runtime
 
 - plain-language Intake with a reviewed issue draft;
-- separate bug-fix and feature/new-project workflows;
-- Standard and Compact branches;
-- revise loops that repeat until approve or reject;
-- role-isolated Specify, Plan, Tasks, and Implement handoffs.
+- separate bug-fix and feature/new-project workflows (core implemented);
+- Standard and Compact branches (core implemented);
+- revise loops that repeat until approve or reject (core implemented);
+- role-isolated Specify, Plan, Tasks, and Implement handoffs (contract implemented);
+- connect provider commands and artifact writers to the core workflow.
 
 ### Wave 4: Code Graph And Evidence
 
