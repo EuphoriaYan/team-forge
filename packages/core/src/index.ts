@@ -7,6 +7,7 @@ export { evaluateActionAdmission } from "./admission";
 export { createEventLedger } from "./ledger";
 export { projectWorkspace } from "./projector";
 export { validateWorkItemReference } from "./work-item";
+export { advanceWorkflow, buildWorkflowDefinition, startWorkflow } from "./workflow";
 export { createSeedWorkspace } from "./seed";
 export type {
   ActionRequest,
@@ -32,6 +33,10 @@ export type {
   WorkContextStore,
   WorkPhase,
   WorkType,
+  WorkflowDefinition,
+  WorkflowRole,
+  WorkflowRunState,
+  WorkflowStepDefinition,
   WorkspaceItem,
   WorkspaceProjection,
   WorkspaceSubspace

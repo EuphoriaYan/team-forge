@@ -44,6 +44,9 @@ The staged compatibility plan is documented in
 behavioral contracts behind the AI Team Spec Kit extension while keeping its
 own event, projection, admission, and UI architecture.
 
+The executable workflow semantics and current adapter boundary are described
+in [docs/WORKFLOWS.md](docs/WORKFLOWS.md).
+
 ## First Product Principle
 
 Do not make humans chase every AI-generated line. Make AI work reviewable through intent, contracts, code graph slices, change radius, tests, and evidence packages.

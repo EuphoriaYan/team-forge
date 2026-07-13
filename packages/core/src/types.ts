@@ -199,3 +199,34 @@ export interface ResumeDecision {
   nextAction?: string;
   reasons: string[];
 }
+
+export type WorkflowRole = "product" | "architect" | "developer" | "reviewer" | "system";
+
+export interface WorkflowStepDefinition {
+  id: string;
+  phase: WorkPhase;
+  role: WorkflowRole;
+  reads: string[];
+  writes: string[];
+  gate?: {
+    authority: string;
+    reviseTo?: string;
+  };
+}
+
+export interface WorkflowDefinition {
+  id: string;
+  workType: WorkType;
+  planningMode: PlanningMode;
+  steps: WorkflowStepDefinition[];
+}
+
+export interface WorkflowRunState {
+  workflowId: string;
+  workId: string;
+  currentStepId?: string;
+  status: "running" | "completed" | "rejected";
+  completedStepIds: string[];
+  revisionCounts: Record<string, number>;
+  gateRecords: HumanGateRecord[];
+}

@@ -24,6 +24,7 @@ flowchart LR
 - `admission.ts`: evaluates agent action risk and review requirements
 - `context.ts`: builds a task context package from task contracts and code graph slices
 - `work-item.ts`: validates stable bug, feature, and new-project source references
+- `workflow.ts`: defines role-isolated workflows, human Gate loops, and resumable run state
 - `seed.ts`: stable seed workspace for MVP and UI development
 
 `packages/file-store` is the default local persistence adapter:
@@ -61,7 +62,8 @@ Intake -> Spec -> Plan -> Tasks -> Implement -> Evidence -> PR -> Review
 Standard mode reviews Plan and Tasks separately. Compact mode still produces
 both artifacts but combines their human review for eligible low-risk work. Bug
 fixes and features use different work-item rules, while new-project work always
-uses Standard mode. See [AI-TEAM-MIGRATION.md](AI-TEAM-MIGRATION.md).
+uses Standard mode. See [WORKFLOWS.md](WORKFLOWS.md) and
+[AI-TEAM-MIGRATION.md](AI-TEAM-MIGRATION.md).
 
 ## Later Architecture
 
